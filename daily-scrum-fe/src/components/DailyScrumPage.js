@@ -29,6 +29,8 @@ const DailyScrumPage = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [timer, setTimer] = useState(TimerDuration);
   const [isSessionActive, setIsSessionActive] = useState(false);
+  const [totalTimeSpent, setTotalTimeSpent] = useState(0);
+
 //   const [error, setError] = useState(""); // Stato per tenere traccia degli errori
 
   const fetchUsers = useCallback(async () => {
@@ -73,16 +75,44 @@ const DailyScrumPage = () => {
   const nextUser = useCallback(() => {
     // Logica per passare al prossimo utente e salvare la sessione corrente
     // ...
+
+    setTotalTimeSpent(prevTotal => prevTotal + (TimerDuration - timer));
+
     selectRandomUser(users);
     setTimer(TimerDuration);
-  }, [users, selectRandomUser]);
+  }, [users, setTotalTimeSpent]);
 
-  const endSession = useCallback(() => {
+  const endSession = useCallback(async () => {
     setIsSessionActive(false);
     setCurrentUser(null);
     // Eventuali altre operazioni di pulizia
     setTimer(TimerDuration);
-  }, []);
+
+    // Salva il tempo totale alla fine della sessione
+    try {
+        const currentDate = new Date();
+        const isoDate = currentDate.toISOString();
+
+        await axios.post(constants.apiSessions, {
+            duration: totalTimeSpent,
+            date: isoDate
+            // Altri eventuali dati della sessione...
+        }, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        });
+
+        // Resetta il tempo totale per la prossima sessione
+        setTotalTimeSpent(0);
+        
+        // Mostra un messaggio di successo o naviga via dalla pagina corrente
+        // ...
+
+    } catch (error) {
+        // Gestisci errori di rete/API qui...
+    }
+  }, [totalTimeSpent]);
 
   const startSession = () => {
     if (!isSessionActive) {
@@ -102,28 +132,31 @@ const DailyScrumPage = () => {
   return (
     <div className="daily-scrum-page">
       {!isSessionActive ? (
-        <button onClick={startSession}>Avvia</button>
+        <button className="start-button" onClick={startSession}>Avvia</button>
       ) : (
         <div>
-          {currentUser?.image_path && (
-            <img src={`${constants.backendUrl}/${currentUser.image_path}`} alt={`Immagine di ${currentUser.username}`} />
-          )}
-          <h2>{currentUser?.username}</h2>
-
-          {/* Countdown Timer */}
-          <div className="timer-container">
-          <CountdownCircleTimer
-            isPlaying
-            duration={TimerDuration}
-            colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
-            colorsTime={[TimerDuration, parseInt(TimerDuration*0.5), parseInt(TimerDuration*0.75), 0]}
-            onComplete={() => ({ shouldRepeat: true, delay: 1 })}
-            >
-            {renderTime}
-          </CountdownCircleTimer>
+          <div className="session-info">
+            <div className="user-image">
+                {currentUser?.image_path && (
+                    <img src={`${constants.backendUrl}/${currentUser.image_path}`} alt={`Immagine di ${currentUser.username}`} />
+                )}
+            </div>
+            <h2 className="username">{currentUser?.username}</h2>
           </div>
-
-          <button onClick={nextUser} disabled={timer === 0}>Next</button>
+          <div className="timer-wrapper">
+            <CountdownCircleTimer
+                isPlaying
+                duration={TimerDuration}
+                colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
+                colorsTime={[TimerDuration, parseInt(TimerDuration*0.5), parseInt(TimerDuration*0.75), 0]}
+                onComplete={() => ({ shouldRepeat: true, delay: 1 })}
+                >
+                {renderTime}
+            </CountdownCircleTimer>
+          </div>
+          <div className="next-button-container">
+            <button className="next-button" onClick={nextUser} disabled={timer === 0}>Next</button>
+          </div>
         </div>
       )}
     </div>

@@ -8,25 +8,45 @@ const SessionsPage = () => {
   const [sessions, setSessions] = useState([]);
 
   useEffect(() => {
-    const fetchSessions = async () => {
-      const config = {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      };
-      const { data } = await axios.get(constants.apiSessions, config);
-      setSessions(data);
+    const config = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
     };
-
-    fetchSessions();
-  }, []);
+    axios.get(constants.apiSessions, config)
+      .then(response => {
+        console.log(response);
+        // Supponendo che la risposta sia un array di oggetti sessione e che ogni sessione abbia un timestamp
+        const sortedSessions = response.data;
+        setSessions(sortedSessions);
+        console.log(sortedSessions);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []); 
 
   return (
     <div className="sessions-page">
-      <h1>Sessioni di Daily Scrum</h1>
-      <ul>
+    <h1>Storico delle Sessioni</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Tempo Totale (sec)</th>
+          {/* Aggiungi altre intestazioni di colonna se necessario */}
+        </tr>
+      </thead>
+      <tbody>
         {sessions.map(session => (
-          <li key={session.id}>{session.username}: {session.duration} minuti</li>
+          <tr key={session.id}>
+            <td>{new Date(session.date).toLocaleString()}</td>
+            <td>{session.duration}</td>
+            {/* Aggiungi altre celle se necessario */}
+          </tr>
         ))}
-      </ul>
+      </tbody>
+    </table>
     </div>
   );
 };

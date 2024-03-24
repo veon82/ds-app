@@ -2,6 +2,8 @@ const express = require('express');
 const multer = require('multer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const path = require('path');
+
 const db = require('./database.js');
 const verifyToken = require('./auth.js');
 
@@ -71,9 +73,9 @@ router.post('/login', async(req, res) => {
 
 // API per memorizzare una sessione
 router.post('/sessions', verifyToken, (req, res) => {
-    const { username, durata } = req.body;
-    const sql = `INSERT INTO sessions (username, durata) VALUES (?, ?)`;
-    db.run(sql, [username, durata], function(err) {
+    const { date, duration } = req.body;
+    const sql = `INSERT INTO sessions (date, duration) VALUES (?, ?)`;
+    db.run(sql, [date, duration], function(err) {
         if (err) {
             return console.error(err.message);
         }
@@ -84,10 +86,9 @@ router.post('/sessions', verifyToken, (req, res) => {
 // API  per recuperare le sessioni
 router.get('/sessions', verifyToken, (req, res) => {
     const sql = `
-    SELECT sessions.id, users.username, sessions.duration, sessions.date
+    SELECT sessions.date, sessions.duration
     FROM sessions
-    JOIN users ON sessions.user_id = users.id
-    ORDER BY sessions.date DESC, sessions.id DESC`;
+    ORDER BY date DESC`;
 
     db.all(sql, [], (err, sessions) => {
         if (err) {

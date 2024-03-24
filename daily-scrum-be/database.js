@@ -18,10 +18,8 @@ const initDb = () => {
 
         db.run(`CREATE TABLE IF NOT EXISTS sessions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER NOT NULL,
             duration INTEGER NOT NULL,
-            date DATE DEFAULT CURRENT_DATE,
-            FOREIGN KEY(user_id) REFERENCES users(id)
+            date DATE DEFAULT CURRENT_DATE
         )`);
     });
 };
