@@ -24,7 +24,11 @@ const upload = multer({ storage: storage });
 const saltRounds = 10;
 router.post('/register',  upload.single('image'), async (req, res) => {
     const { username, password } = req.body;
-    const imagePath = req.file.path; // Il percorso dell'immagine caricata
+
+    let imagePath;
+    if (req.file) {
+        imagePath = req.file.path;
+    }
 
     try {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
