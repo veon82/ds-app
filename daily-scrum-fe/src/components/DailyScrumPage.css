@@ -1,0 +1,29 @@
+.daily-scrum-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+  
+.daily-scrum-page button {
+    width: 30%;
+    padding: 10px;
+    border: none;
+    background-color: #007bff; /* O il colore che preferisci */
+    color: white;
+    border-radius: 4px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.daily-scrum-page button:hover {
+    background-color: #0056b3; /* Un po' più scuro quando si passa il mouse sopra */
+}
+    
+.daily-scrum-page img {
+    max-width: 350px;
+    max-height: 250px;
+    object-fit: contain;
+}
+  
