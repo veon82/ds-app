@@ -29,8 +29,8 @@
 }
 
 .main-content {
-  margin-left: 200px; /* Stesso valore della larghezza della sidebar */
-  padding: 20px;
+  margin-left: 200px;
+  /* padding: 20px; */
 }
 
 .error-message {

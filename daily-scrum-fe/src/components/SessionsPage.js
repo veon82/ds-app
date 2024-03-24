@@ -4,6 +4,12 @@ import axios from 'axios';
 import * as constants from '../const';
 import './SessionsPage.css';
 
+function secondsToMinutes(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes} minuti e ${remainingSeconds} secondi`;
+}
+
 const SessionsPage = () => {
   const [sessions, setSessions] = useState([]);
 
@@ -15,14 +21,11 @@ const SessionsPage = () => {
     };
     axios.get(constants.apiSessions, config)
       .then(response => {
-        console.log(response);
-        // Supponendo che la risposta sia un array di oggetti sessione e che ogni sessione abbia un timestamp
         const sortedSessions = response.data;
         setSessions(sortedSessions);
-        console.log(sortedSessions);
       })
       .catch(error => {
-        console.log(error);
+        console.error(error);
       });
   }, []); 
 
@@ -33,7 +36,7 @@ const SessionsPage = () => {
       <thead>
         <tr>
           <th>Data</th>
-          <th>Tempo Totale (sec)</th>
+          <th>Tempo Totale</th>
           {/* Aggiungi altre intestazioni di colonna se necessario */}
         </tr>
       </thead>
@@ -41,7 +44,7 @@ const SessionsPage = () => {
         {sessions.map(session => (
           <tr key={session.id}>
             <td>{new Date(session.date).toLocaleString()}</td>
-            <td>{session.duration}</td>
+            <td>{secondsToMinutes(session.duration)}</td>
             {/* Aggiungi altre celle se necessario */}
           </tr>
         ))}

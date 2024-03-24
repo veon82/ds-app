@@ -33,9 +33,9 @@ const LoginPage = ({ history }) => {
         <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)}/>
         <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)}/>
         <button onClick={handleLogin}>Accedi</button>
-        <div className="login-links">
+        {/* <div className="login-links">
           <Link to="/register">Registrati</Link>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 .daily-scrum-page {
-    background-image: url('/public/ds-background.png');
+    background: lightblue;
     background-size: 50%; /* Copre l'intero spazio disponibile senza distorcere l'immagine */
     background-position: right bottom; /* Centra l'immagine nello spazio disponibile */
     background-repeat: no-repeat;
