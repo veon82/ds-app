@@ -31,8 +31,6 @@ const DailyScrumPage = () => {
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [totalTimeSpent, setTotalTimeSpent] = useState(0);
 
-//   const [error, setError] = useState(""); // Stato per tenere traccia degli errori
-
   const fetchUsers = useCallback(async () => {
     // console.log(`Fetching users with token: ${localStorage.getItem('token')}`);
     const config = {
@@ -73,14 +71,9 @@ const DailyScrumPage = () => {
   }, []);
 
   const nextUser = useCallback(() => {
-    // Logica per passare al prossimo utente e salvare la sessione corrente
-    // ...
-
     setTotalTimeSpent(prevTotal => prevTotal + (TimerDuration - timer));
-
-    selectRandomUser(users);
-    setTimer(TimerDuration);
-  }, [users, setTotalTimeSpent]);
+    selectRandomUser(users); // Dovrebbe anche impostare una nuova chiave per il CountdownCircleTimer
+  }, [users, timer]);
 
   const endSession = useCallback(async () => {
     setIsSessionActive(false);
@@ -114,20 +107,16 @@ const DailyScrumPage = () => {
     }
   }, [totalTimeSpent]);
 
-  const startSession = () => {
+  const startSession = useCallback(() => {
     if (!isSessionActive) {
       fetchUsers(); // Esegui il fetch degli utenti al click su "Avvia"
     }
-  };
+  }, [isSessionActive, fetchUsers]);
 
-  useEffect(() => {
-    if (timer === 0) {
-      nextUser();
-    } else {
-      const timerId = setTimeout(() => setTimer(timer - 1), 1000);
-      return () => clearTimeout(timerId); // Clear the timeout if the component unmounts
-    }
-  }, [timer, nextUser]);
+  const handleComplete = () => {
+    nextUser();
+    return { shouldRepeat: false, delay: 0 };
+  };
 
   return (
     <div className="daily-scrum-page">
@@ -145,11 +134,12 @@ const DailyScrumPage = () => {
           </div>
           <div className="timer-wrapper">
             <CountdownCircleTimer
+                key={currentUser?.id || Date.now()} // Aggiorna la key con l'ID dell'utente corrente o con un timestamp per forzare il re-render
                 isPlaying
                 duration={TimerDuration}
                 colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
                 colorsTime={[TimerDuration, parseInt(TimerDuration*0.5), parseInt(TimerDuration*0.75), 0]}
-                onComplete={() => ({ shouldRepeat: true, delay: 1 })}
+                onComplete={handleComplete}
                 >
                 {renderTime}
             </CountdownCircleTimer>
