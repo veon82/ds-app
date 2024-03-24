@@ -1,10 +1,28 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+
 import * as constants from '../const';
 import './DailyScrumPage.css';
 
-const TimerDuration = 120; // Durata del timer in secondi
+const TimerDuration = 12; // Durata del timer in secondi
+
+const renderTime = ({ remainingTime }) => {
+    if (remainingTime === 1) {
+      return <div className="timer">Troppo tardi...</div>;
+    } else if (remainingTime === 10){
+      return <div className="timer">10 secondi...!</div>;
+    }
+  
+    return (
+      <div className="timer">
+        <div className="text">Rimangono</div>
+        <div className="value">{remainingTime}</div>
+        <div className="text">secondi</div>
+      </div>
+    );
+};
 
 const DailyScrumPage = () => {
   const [users, setUsers] = useState([]);
@@ -87,17 +105,30 @@ const DailyScrumPage = () => {
         <button onClick={startSession}>Avvia</button>
       ) : (
         <div>
-          {currentUser?.image_path && ( // Controlla se c'è un'immagine per l'utente corrente
-          <img src={`${constants.backendUrl}/${currentUser.image_path}`} alt={`Immagine di ${currentUser.username}`} />
+          {currentUser?.image_path && (
+            <img src={`${constants.backendUrl}/${currentUser.image_path}`} alt={`Immagine di ${currentUser.username}`} />
           )}
           <h2>{currentUser?.username}</h2>
-          <h2>{`Tempo rimanente: ${timer} secondi`}</h2>
+
+          {/* Countdown Timer */}
+          <div className="timer-container">
+          <CountdownCircleTimer
+            isPlaying
+            duration={TimerDuration}
+            colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
+            colorsTime={[TimerDuration, parseInt(TimerDuration*0.5), parseInt(TimerDuration*0.75), 0]}
+            onComplete={() => ({ shouldRepeat: true, delay: 1 })}
+            >
+            {renderTime}
+          </CountdownCircleTimer>
+          </div>
+
           <button onClick={nextUser} disabled={timer === 0}>Next</button>
         </div>
       )}
-      {/* {error && <div className="error-message">{error}</div>} {} */}
     </div>
   );
+
 };
 
 export default DailyScrumPage;
