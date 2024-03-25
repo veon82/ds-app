@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ds-app-be
+  namespace: daily-scrum
+spec:
+  selector:
+    app: ds-app-be
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
+  type: LoadBalancer
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ds-app-fe
+  namespace: daily-scrum
+spec:
+  selector:
+    app: ds-app-fe
+  ports:
+  - protocol: TCP
+    port: 3001
+    targetPort: 80
+  type: LoadBalancer
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ds-app-ingress
+  namespace: daily-scrum
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - example.ddns.net
+      secretName: example.ddns.net
+  rules:
+    - host: example.ddns.net
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: ds-app-be
+                port:
+                  number: 3000
+          - path: /uploads
+            pathType: Prefix
+            backend:
+              service:
+                name: ds-app-be
+                port:
+                  number: 3000
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ds-app-fe
+                port:
+                  number: 3001

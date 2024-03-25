@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ds-app-be
+  namespace: daily-scrum
+spec:
+  selector:
+    matchLabels:
+      app: ds-app-be
+  template:
+    metadata:
+      labels:
+        app: ds-app-be
+    spec:
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 30
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
+      containers:
+      - name: ds-app-be
+        image: veon82/ds-app-be:latest
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "500m"
+          limits:
+            memory: "128Mi"
+            cpu: "750m"
+        env:
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: ds-app-jwt-secret
+              key: JWT_SECRET
+        ports:
+          - containerPort: 3000
+        volumeMounts:
+        - name: ds-app-storage
+          mountPath: /usr/src/app/uploads
+          subPath: uploads
+        - name: ds-app-storage
+          mountPath: /usr/src/app/db
+          subPath: db
+      volumes:
+      - name: ds-app-storage
+        persistentVolumeClaim:
+          claimName: ds-app-pvc
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ds-app-fe
+  namespace: daily-scrum
+spec:
+  selector:
+    matchLabels:
+      app: ds-app-fe
+  template:
+    metadata:
+      labels:
+        app: ds-app-fe
+    spec:
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 30
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
+      containers:
+      - name: ds-app-fe
+        image: veon82/ds-app-fe:latest
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "500m"
+          limits:
+            memory: "128Mi"
+            cpu: "750m"
+        ports:
+          - containerPort: 80
