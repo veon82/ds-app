@@ -137,7 +137,7 @@ router.get('/jira/:userId', verifyToken, (req, res) => {
         const issues = response.data.issues.map(issue => ({
             key: issue.key,
             title: issue.fields.summary,
-            description: issue.fields.description ? issue.fields.description.content[0].content[0].text : 'No description'
+            description: issue.fields.description ? issue.fields.description.content[0].content[0].text : '-'
         }));
 
         console.log(JSON.stringify(issues, null, 2));
