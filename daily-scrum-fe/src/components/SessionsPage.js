@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 import * as constants from '../const';
 import './SessionsPage.css';
@@ -26,6 +27,7 @@ const SessionsPage = () => {
       })
       .catch(error => {
         console.error(error);
+        toast.error("Impossibile caricare le sessioni");
       });
   }, []); 
 

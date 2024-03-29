@@ -27,10 +27,16 @@ const renderTime = ({ remainingTime }) => {
 const DailyScrumPage = () => {
   const [users, setUsers] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [userTasks, setUserTasks] = useState([]);
   const [timer, setTimer] = useState(TimerDuration);
   const [startTime, setStartTime] = useState(null);
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [totalTimeSpent, setTotalTimeSpent] = useState(0);
+  const [isTimerPaused, setIsTimerPaused] = useState(false);
+
+  const togglePause = () => {
+    setIsTimerPaused(prev => !prev);
+  };
 
   const fetchUsers = useCallback(async () => {
     const config = {
@@ -53,6 +59,21 @@ const DailyScrumPage = () => {
     }
   }, []);
 
+  const fetchUserTasks = useCallback(async (user) => {
+    try {
+      const response = await axios.get(`${constants.apiJira}/${user.jira_id}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      console.log("Tasks: " + response.data);
+      setUserTasks(response.data);
+    } catch (error) {
+      toast.error("Impossibile recuperare i task per l'utente " + user.username);
+      setUserTasks([]); // Resetta i task in caso di errore
+    }
+  }, []);
+
   const selectRandomUser = (usersArray) => {
     // Effettua una copia dell'array per evitare di modificare lo stato direttamente
     let tempUsers = [...usersArray];
@@ -63,6 +84,9 @@ const DailyScrumPage = () => {
       setCurrentUser(selectedUser); // Aggiorna l'utente corrente
       setUsers(tempUsers); // Aggiorna l'array degli utenti senza l'utente selezionato
       console.log('Current user: ' + selectedUser.username);
+
+      fetchUserTasks(selectedUser);
+
       // Nota: Qui non è necessario chiamare setTimer perché `key` cambierà
       // ciò provocherà il re-render del componente CountdownCircleTimer che resettare il timer
     } else {
@@ -77,7 +101,6 @@ const DailyScrumPage = () => {
     console.log('Time spent for ' + currentUser.username + ':', timeSpent);
 
     setTotalTimeSpent(prevTotal => prevTotal + timeSpent);
-
     selectRandomUser(users); // Dovrebbe anche impostare una nuova chiave per il CountdownCircleTimer
     setStartTime(now); // Aggiorna l'inizio del turno per il prossimo utente
   }, [users, startTime]);
@@ -107,7 +130,7 @@ const DailyScrumPage = () => {
         });
 
     } catch (error) {
-        // Gestisci errori di rete/API qui...
+        toast.error('Errore nel salvataggio della sessione');
     } finally {
         setIsSessionActive(false);
         setCurrentUser(null);
@@ -133,29 +156,53 @@ const DailyScrumPage = () => {
       {!isSessionActive ? (
         <button className="start-button" onClick={startSession}>Avvia</button>
       ) : (
-        <div>
+        <div className="session-layout">
           <div className="session-info">
             <div className="user-image">
                 {currentUser?.image_path && (
                     <img src={`${constants.backendUrl}/${currentUser.image_path}`} alt={`Immagine di ${currentUser.username}`} />
                 )}
+                <button className="ds-button" onClick={nextUser} disabled={timer === 0}>Next</button>
             </div>
-            <h2 className="username">{currentUser?.username}</h2>
+            <div>
+              <h2 className="username">{currentUser?.username}</h2>
+              <div className="timer-wrapper">
+                <CountdownCircleTimer
+                    key={currentUser?.id || Date.now()} // Aggiorna la key con l'ID dell'utente corrente o con un timestamp per forzare il re-render
+                    isPlaying={!isTimerPaused}
+                    duration={TimerDuration}
+                    colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
+                    colorsTime={[TimerDuration, parseInt(TimerDuration*0.5), parseInt(TimerDuration*0.75), 0]}
+                    onComplete={handleComplete}
+                    >
+                    {renderTime}
+                </CountdownCircleTimer>
+              </div>
+              <button className="ds-button" onClick={togglePause}>
+                {isTimerPaused ? 'Riprendi' : 'Pausa'}
+              </button>
+            </div>
           </div>
-          <div className="timer-wrapper">
-            <CountdownCircleTimer
-                key={currentUser?.id || Date.now()} // Aggiorna la key con l'ID dell'utente corrente o con un timestamp per forzare il re-render
-                isPlaying
-                duration={TimerDuration}
-                colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
-                colorsTime={[TimerDuration, parseInt(TimerDuration*0.5), parseInt(TimerDuration*0.75), 0]}
-                onComplete={handleComplete}
-                >
-                {renderTime}
-            </CountdownCircleTimer>
-          </div>
-          <div className="next-button-container">
-            <button className="next-button" onClick={nextUser} disabled={timer === 0}>Next</button>
+          <div className="task-container">
+            <h2>Task di {currentUser?.username} "in progress"</h2>
+            <table className="task-table">
+              <thead>
+                <tr>
+                  <th>Codice</th>
+                  <th>Titolo</th>
+                  <th>Descrizione</th>
+                </tr>
+              </thead>
+              <tbody>
+                {userTasks && userTasks.map((task, index) => (
+                  <tr key={index}>
+                    <td>{task.key}</td>
+                    <td>{task.title}</td>
+                    <td>{task.description}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}

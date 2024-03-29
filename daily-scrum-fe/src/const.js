@@ -6,3 +6,4 @@ export const apiUsers = `${backendApiUrl}/users`;
 export const apiSessions = `${backendApiUrl}/sessions`;
 export const apiLogin = `${backendApiUrl}/login`;
 export const apiRegister = `${backendApiUrl}/register`;
+export const apiJira = `${backendApiUrl}/jira`
