@@ -1,5 +1,6 @@
 const express = require('express');
 const multer = require('multer');
+const axios = require('axios');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const path = require('path');
@@ -61,7 +62,7 @@ router.post('/login', async(req, res) => {
             bcrypt.compare(password, user.password, (err, result) => {
                 if (result) {
                     // Password corrisponde, genera e restituisce il JWT
-                    const accessToken = jwt.sign({ name: user.username, id: user.id }, process.env.JWT_SECRET);
+                    const accessToken = jwt.sign({ name: user.username, id: user.id }, process.env.JWT_SECRET, { expiresIn: '1d' });
                     res.json({ accessToken });
                 } else {
                     // Password non corrispondente
@@ -92,7 +93,7 @@ router.get('/sessions', verifyToken, (req, res) => {
     const sql = `
     SELECT sessions.date, sessions.duration
     FROM sessions
-    ORDER BY date DESC`;
+    ORDER BY date DESC LIMIT 200`;
 
     db.all(sql, [], (err, sessions) => {
         if (err) {
@@ -104,7 +105,7 @@ router.get('/sessions', verifyToken, (req, res) => {
 });
 
 router.get('/users', verifyToken, (req, res) => {
-    const sql = `SELECT id, username, image_path from users`;
+    const sql = `SELECT id, username, jira_id, image_path from users`;
 
     db.all(sql, [], (err, rows) => {
         if (err) {
@@ -113,6 +114,39 @@ router.get('/users', verifyToken, (req, res) => {
         }
         res.json({ users: rows });
     });
+});
+
+router.get('/jira/:userId', verifyToken, (req, res) => {
+    const userId = req.params.userId;
+
+    const jiraDomain = "teamsystem.atlassian.net";
+    const authHeader = `Basic ${process.env.JIRA_TOKEN}`;
+    const projectIds = ["PCG", "TSXCL"];
+    const projectsString = projectIds.join(",");
+
+    const jql = encodeURIComponent(`assignee=${userId} AND status="In Progress" AND project IN (${projectsString})`);
+    const url = `https://${jiraDomain}/rest/api/3/search?jql=${jql}`;
+
+    axios.get(url, {
+        headers: {
+          'Authorization': authHeader,
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(response => {
+        const issues = response.data.issues.map(issue => ({
+            key: issue.key,
+            title: issue.fields.summary,
+            description: issue.fields.description ? issue.fields.description.content[0].content[0].text : 'No description'
+        }));
+
+        console.log(JSON.stringify(issues, null, 2));
+        res.json(issues);
+      })
+      .catch(error => {
+        console.error("Errore nella richiesta:", error);
+      });
+
 });
 
 // Route protetta che richiede un token JWT valido

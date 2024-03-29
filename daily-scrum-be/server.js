@@ -12,13 +12,7 @@ app.use(cors({
     origin: 'http://localhost:3001'
 }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-
-
-
-
 app.use('/api', apiRoutes);
-
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server listening @port ${PORT}`));

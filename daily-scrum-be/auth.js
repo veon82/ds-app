@@ -14,7 +14,11 @@ const verifyToken = (req, res, next) => {
             req.user = decoded;
             next();
         } catch (err) {
-            res.status(403).send('Token non valido.');
+            if (err.name == 'TokenExpiredError') {
+                res.status(403).send('Token scaduto');
+            } else {
+                res.status(403).send('Token non valido.');
+            }
         }
     } else {
         // Se non c'è header di autorizzazione o non è in formato Bearer
