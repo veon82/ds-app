@@ -22,31 +22,31 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // API per la registrazione degli utenti
-const saltRounds = 10;
-router.post('/register',  upload.single('image'), async (req, res) => {
-    const { username, password } = req.body;
+// const saltRounds = 10;
+// router.post('/register',  upload.single('image'), async (req, res) => {
+//     const { username, password } = req.body;
 
-    let imagePath;
-    if (req.file) {
-        imagePath = req.file.path;
-    }
+//     let imagePath;
+//     if (req.file) {
+//         imagePath = req.file.path;
+//     }
 
-    try {
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-        const sql = `INSERT INTO users (username, password, image_path) VALUES (?, ?, ?)`;
-        db.run(sql, [username, hashedPassword, imagePath], function(err) {
-            if (err) {
-                console.error(err.message);
-                res.status(500).send('Impossibile registrare l\'utente.');
-            } else {
-                console.log(`User created with ID: ${this.lastID}`);
-                res.status(201).send('Utente registrato con successo.');
-            }
-        });
-    } catch {
-        res.status(500).send();
-    }
-});
+//     try {
+//         const hashedPassword = await bcrypt.hash(password, saltRounds);
+//         const sql = `INSERT INTO users (username, password, image_path) VALUES (?, ?, ?)`;
+//         db.run(sql, [username, hashedPassword, imagePath], function(err) {
+//             if (err) {
+//                 console.error(err.message);
+//                 res.status(500).send('Impossibile registrare l\'utente.');
+//             } else {
+//                 console.log(`User created with ID: ${this.lastID}`);
+//                 res.status(201).send('Utente registrato con successo.');
+//             }
+//         });
+//     } catch {
+//         res.status(500).send();
+//     }
+// });
 
 // API login
 router.post('/login', async(req, res) => {
