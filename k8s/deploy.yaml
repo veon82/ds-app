@@ -37,6 +37,11 @@ spec:
             secretKeyRef:
               name: ds-app-jwt-secret
               key: JWT_SECRET
+        - name: JIRA_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: ds-app-jira-token
+              key: JIRA_TOKEN
         ports:
           - containerPort: 3000
         volumeMounts:
