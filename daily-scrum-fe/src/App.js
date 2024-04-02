@@ -17,11 +17,11 @@ function App() {
       <div className="main-content">
         <ToastContainer />
         <Routes>
-          <Route path="/ds/login" element={<LoginPage />} />
-          <Route path="/ds/register" element={<RegisterPage />} />
-          <Route path="/ds/sessions" element={<SessionsPage />} />
-          <Route path="/ds/daily-scrum" element={<DailyScrumPage />} />
-          <Route path="/ds" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          {/* <Route path="/register" element={<RegisterPage />} /> */}
+          <Route path="/sessions" element={<SessionsPage />} />
+          <Route path="/daily-scrum" element={<DailyScrumPage />} />
+          <Route path="/" element={<LoginPage />} />
         </Routes>
       </div>
     </Router>

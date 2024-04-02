@@ -1,22 +1,78 @@
 /* components/Sidebar.css */
 .sidebar {
-    width: 200px;
-    height: 100vh;
-    position: fixed;
-    left: 0;
-    top: 0;
-    background-color: #333;
-    padding: 20px;
+  background: #7991d8;
+  color: white;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 200px;
+  padding: 10px 15px;
+  transition: width 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 50px;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 40px;
+}
+
+.toggle-button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  color: white;
+  text-decoration: none;
+  font-size: 1.2rem;
+}
+
+.icon {
+  fill: white;
+  width: 20px;
+  height: 20px;
+}
+
+.text {
+  margin-left: 15px;
+  display: block;
+}
+
+/* Icon and text visibility for the collapsed sidebar */
+.sidebar.collapsed .text,
+.sidebar.collapsed .toggle-button {
+  display: none;
+}
+
+/* Hover effects */
+.menu-item:hover {
+  background: #3e3e52;
+  border-radius: 4px;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 50px;
   }
-  
-  .sidebar a {
-    color: white;
-    text-decoration: none;
-    display: block;
-    padding: 10px 0;
+  .sidebar.expanded {
+    width: 250px;
   }
-  
-  .sidebar a:hover {
-    background-color: #555;
-  }
-  
+}

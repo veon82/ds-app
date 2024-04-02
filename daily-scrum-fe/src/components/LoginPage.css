@@ -3,7 +3,7 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f4f4f4; /* O il colore di sfondo che preferisci */
+    background-color: #fff; /* O il colore di sfondo che preferisci */
 }
 
 .login-box {
@@ -34,7 +34,7 @@ box-sizing: border-box; /* Così il padding non influisce sulla larghezza */
 width: 100%;
 padding: 10px;
 border: none;
-background-color: #007bff; /* O il colore che preferisci */
+background-color: #7991d8; /* O il colore che preferisci */
 color: white;
 border-radius: 4px;
 margin-top: 10px;

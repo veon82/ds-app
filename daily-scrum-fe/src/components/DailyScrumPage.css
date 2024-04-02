@@ -1,5 +1,5 @@
 .daily-scrum-page {
-    background: lightblue;
+    background: white;
     background-size: 50%; /* Copre l'intero spazio disponibile senza distorcere l'immagine */
     background-position: right bottom; /* Centra l'immagine nello spazio disponibile */
     background-repeat: no-repeat;
@@ -15,7 +15,7 @@
     padding: 15px 30px;
     margin-top: 20px;
     font-size: 1rem;
-    background-color: #007bff;
+    background-color: #7991d8;
     color: white;
     border: none;
     border-radius: 8px;
@@ -57,7 +57,7 @@
     padding: 10px 20px;
     margin-top: 20px;
     font-size: 1rem;
-    background-color: #007bff;
+    background-color: #7991d8;
     color: white;
     border: none;
     border-radius: 8px;
@@ -90,7 +90,7 @@
 }
 
 .task-table th {
-    background-color: #004777;
+    background-color: #7991d8;
     color: white;
 }
 
