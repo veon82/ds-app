@@ -26,21 +26,21 @@ spec:
     - host: example.ddns.net
       http:
         paths:
-          - path: /ds/api
+          - path: /api
             pathType: Prefix
             backend:
               service:
                 name: ds-app-be
                 port:
                   number: 3000
-          - path: /ds/uploads
+          - path: /uploads
             pathType: Prefix
             backend:
               service:
                 name: ds-app-be
                 port:
                   number: 3000
-          - path: /ds/
+          - path: /
             pathType: Prefix
             backend:
               service:

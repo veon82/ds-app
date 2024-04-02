@@ -12,12 +12,8 @@ COPY . .
 RUN npm run build
 
 # Fase di run
-FROM nginx:alpine
-
-# Copia l'output della build dallo step precedente
+FROM nginx:stable-alpine
 COPY --from=build /app/build /usr/share/nginx/html
-
-# Espone la porta 80 per l'accesso all'applicazione
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
-
-# Nginx avvia già il server in foreground, quindi non è necessario CMD
+CMD ["nginx", "-g", "daemon off;"]

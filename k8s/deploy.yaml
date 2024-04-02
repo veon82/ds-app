@@ -82,7 +82,7 @@ spec:
           tolerationSeconds: 10
       containers:
       - name: ds-app-fe
-        image: veon82/ds-app-fe:latest
+        image: veon82/ds-app-fe:0.0.2
         resources:
           requests:
             memory: "64Mi"
