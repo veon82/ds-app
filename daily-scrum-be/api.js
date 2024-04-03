@@ -124,7 +124,7 @@ router.get('/jira/:userId', verifyToken, (req, res) => {
     const projectIds = ["PCG", "TSXCL"];
     const projectsString = projectIds.join(",");
 
-    const jql = encodeURIComponent(`assignee=${userId} AND status="In Progress" AND project IN (${projectsString})`);
+    const jql = encodeURIComponent(`assignee=${userId} AND (status="In Progress" OR status="SELECTED FOR DEVELOPMENT") AND project IN (${projectsString})`);
     const url = `https://${jiraDomain}/rest/api/3/search?jql=${jql}`;
 
     axios.get(url, {
@@ -137,10 +137,11 @@ router.get('/jira/:userId', verifyToken, (req, res) => {
         const issues = response.data.issues.map(issue => ({
             key: issue.key,
             title: issue.fields.summary,
+            status: issue.fields.status.name,
             description: issue.fields.description ? issue.fields.description.content[0].content[0].text : '-'
         }));
 
-        console.log(JSON.stringify(issues, null, 2));
+        // console.log(JSON.stringify(issues, null, 2));
         res.json(issues);
       })
       .catch(error => {

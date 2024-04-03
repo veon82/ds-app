@@ -66,8 +66,9 @@ const DailyScrumPage = () => {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
-      console.log("Tasks: " + response.data);
-      setUserTasks(response.data);
+      // console.log("Tasks: " + response.data);
+      const sortedTasks = response.data.sort((a, b) => (a.status > b.status) ? 1 : (a.status < b.status) ? -1 : 0);
+      setUserTasks(sortedTasks);
     } catch (error) {
       toast.error("Impossibile recuperare i task per l'utente " + user.username);
       setUserTasks([]); // Resetta i task in caso di errore
@@ -184,12 +185,13 @@ const DailyScrumPage = () => {
             </div>
           </div>
           <div className="task-container">
-            <h2>Task di {currentUser?.username} "in progress"</h2>
+            <h2>Task di {currentUser?.username}</h2>
             <table className="task-table">
               <thead>
                 <tr>
                   <th>Codice</th>
                   <th>Titolo</th>
+                  <th>Stato</th>
                   <th>Descrizione</th>
                 </tr>
               </thead>
@@ -198,6 +200,7 @@ const DailyScrumPage = () => {
                   <tr key={index}>
                     <td>{task.key}</td>
                     <td>{task.title}</td>
+                    <td>{task.status}</td>
                     <td>{task.description}</td>
                   </tr>
                 ))}

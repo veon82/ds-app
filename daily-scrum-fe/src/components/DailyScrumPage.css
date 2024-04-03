@@ -79,7 +79,13 @@
     margin-top: 20px;
     border-collapse: collapse;
     width: 100%; /* Adatta alla larghezza del suo contenitore */
-    max-width: 1000px; /* Imposta una larghezza massima per la tabella */
+    max-width: calc(100vw - 300px)
+}
+
+@media (max-width: 768px) {
+    .task-table {
+      max-width: calc(100vw - 50px); /* Ad esempio, se la sidebar è 50px quando è collassata */
+    }
 }
 
 .task-table th,
