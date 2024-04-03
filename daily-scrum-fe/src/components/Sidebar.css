@@ -76,3 +76,25 @@
     width: 250px;
   }
 }
+
+.sidebar-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px 10px;
+  text-align: center;
+}
+
+.user-info {
+  margin-bottom: 10px; /* Aggiungi spazio tra le informazioni dell'utente e la versione dell'app */
+}
+
+.app-version {
+  font-size: 0.8rem; /* Riduci la dimensione del font per la versione dell'app */
+}
+
+.collapsed .sidebar-footer .user-info,
+.collapsed .sidebar-footer .app-version {
+  display: none;
+}
