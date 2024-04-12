@@ -1,0 +1,82 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'daily-scrum-be/**'
+      - 'daily-scrum-fe/**'
+
+jobs:
+
+  filter-paths:
+    runs-on: ubuntu-latest
+    outputs:
+      be: ${{ steps.filter.outputs.be }}
+      fe: ${{ steps.filter.outputs.fe }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Paths filter
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            be:
+              - 'daily-scrum-be/**'
+            fe:
+              - 'daily-scrum-fe/**'
+
+  build-and-push-be:
+    needs: filter-paths
+    runs-on: ubuntu-latest
+    if: needs.filter-paths.outputs.be == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Backend image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./daily-scrum-be
+          file: ./daily-scrum-be/Dockerfile
+          push: true
+          tags: veon82/ds-app-be:latest
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+
+  build-and-push-fe:
+    needs: filter-paths
+    runs-on: ubuntu-latest
+    if: needs.filter-paths.outputs.fe == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Frontend image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./daily-scrum-fe
+          file: ./daily-scrum-fe/Dockerfile
+          push: true
+          tags: veon82/ds-app-fe:latest
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
