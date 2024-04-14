@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import * as constants from '../const';
 import './LoginPage.css';
+import { AuthContext } from '../AuthProvider';
 
 const LoginPage = ({ history }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const { login } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -16,7 +18,7 @@ const LoginPage = ({ history }) => {
     try {
       const { data, status } = await axios.post(constants.apiLogin, { username, password });
       if (status === 200) {
-        localStorage.setItem('token', data.accessToken);
+        login(data.accessToken);
         navigate('/daily-scrum');
       } else {
         toast.error('Login non riuscito: Status Code ' + status);
