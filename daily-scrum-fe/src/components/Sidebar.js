@@ -1,31 +1,17 @@
 // components/Sidebar.js
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import './Sidebar.css';
 import { ReactComponent as DSIcon } from './icons/ds.svg';
 import { ReactComponent as HistoryIcon } from './icons/history.svg';
 import { ReactComponent as LoginIcon } from './icons/login.svg';
-import { jwtDecode } from 'jwt-decode';
 import packageJson from '../../package.json';
-
-const getUsernameFromJWT = () => {
-  const token = localStorage.getItem('token'); // o recuperalo da un cookie
-  if (!token) return null;
-  
-  try {
-    const decoded = jwtDecode(token);
-    return decoded.name;
-  } catch (error) {
-    console.error('Errore nella decodifica del token JWT', error);
-    return null;
-  }
-};
+import { AuthContext } from '../AuthProvider';
 
 const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(true);
+  const { user } = useContext(AuthContext);
   const appVersion = packageJson.version;
-  
-  const username = getUsernameFromJWT();
-  
+
   return (
     <div className={`sidebar ${isExpanded ? 'expanded' : 'collapsed'}`}>
       <div className="sidebar-header">
@@ -50,7 +36,11 @@ const Sidebar = () => {
       </div>
       <div className="sidebar-footer">
         <div className="user-info">
-          {isExpanded && <span>{`Ciao, ${username}`}</span>}
+          {isExpanded && user ? (
+              <div>Ciao, {user}</div>
+            ) : (
+              <div>Utente non loggato</div>
+            )}
         </div>
         <div className="app-version">
           {isExpanded && <span>v{appVersion}</span>}
