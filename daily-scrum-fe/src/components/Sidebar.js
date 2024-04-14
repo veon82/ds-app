@@ -4,6 +4,7 @@ import './Sidebar.css';
 import { ReactComponent as DSIcon } from './icons/ds.svg';
 import { ReactComponent as HistoryIcon } from './icons/history.svg';
 import { ReactComponent as LoginIcon } from './icons/login.svg';
+import { ReactComponent as ShitWheelIcon } from './icons/shitwheel.svg';
 import packageJson from '../../package.json';
 import { AuthContext } from '../AuthProvider';
 
@@ -24,6 +25,10 @@ const Sidebar = () => {
         <a href="/daily-scrum" className="menu-item">
           <DSIcon className="icon" />
           {isExpanded && <span className="text">Daily Scrum</span>}
+        </a>
+        <a href="/daily-shit" className="menu-item">
+          <ShitWheelIcon className="icon" />
+          {isExpanded && <span className="text">Daily Shit</span>}
         </a>
         <a href="/sessions" className="menu-item">
           <HistoryIcon className="icon" />

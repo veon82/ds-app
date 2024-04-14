@@ -6,6 +6,7 @@ import LoginPage from './components/LoginPage';
 import SessionsPage from './components/SessionsPage';
 import DailyScrumPage from './components/DailyScrumPage';
 import { AuthContext } from './AuthProvider';
+import ShitWheel from './components/ShitWheel';
 import { ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
@@ -29,6 +30,7 @@ const App = () => {
           {/* <Route path="/register" element={<RegisterPage />} /> */}
           <Route path="/sessions" element={<SessionsPage />} />
           <Route path="/daily-scrum" element={<DailyScrumPage />} />
+          <Route path="/daily-shit" element={<ShitWheel />} />
           <Route path="/" element={<LoginPage />} />
         </Routes>
       </div>
